@@ -8,7 +8,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 add_subdirectory(external/iathook)
 
-include_directories(external/iathook)
+include_directories(external/iathook/src)
 link_directories(lib)
 
 file(GLOB_RECURSE SOURCES
@@ -18,6 +18,6 @@ file(GLOB_RECURSE SOURCES
 
 string(REGEX REPLACE "[^;]*CMakeFiles/[^;]+;?" "" SOURCES "${SOURCES}")
 
-add_library(ptrace_win ${SOURCES})
-
+add_library(ptrace_win SHARED ${SOURCES})
+target_link_libraries(ptrace_win asm_utils iathook)
 

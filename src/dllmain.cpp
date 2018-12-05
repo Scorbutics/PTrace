@@ -78,11 +78,11 @@ DWORD WINAPI startUpThreadGlobalHook(LPVOID args)
 
 
 	
-	IATDumpProcess(fDummpIAT, modules);
+	//IATDumpProcess(fDummpIAT, modules);
 
 	std::cout << "IATs Dumps finished ! Take a look to DumpIAT.txt" << std::endl;
 
-	IATTraceInclude(includeds, modules);
+	//IATTraceInclude(includeds, modules);
 	return 0;
 }
 
