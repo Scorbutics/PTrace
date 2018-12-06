@@ -7,7 +7,6 @@
 
 #include "IATUtils.h"
 
-using namespace std;
 HMODULE hModule;
 std::string moduleDirectory;
 
@@ -40,53 +39,63 @@ std::string GetModuleDirectory(HMODULE hMod) {
 	return result;
 }
 
-
-
-DWORD WINAPI startUpThreadGlobalHook(LPVOID args)
-{
+DWORD WINAPI startUpThreadGlobalHook(LPVOID args) {
 	if (AllocConsole()) {
 		freopen("CONOUT$", "w", stdout);
 	}
 	moduleDirectory = GetModuleDirectory(hModule);
 
-	unordered_map<string, bool> includeds;
+	std::unordered_map<std::string, bool> includeds;
 
 	char currentAppDir[512] = { '\0' };
 	GetCurrentDirectoryA(sizeof(currentAppDir)-1, currentAppDir);
 
-	cout << "Current application directory : " << currentAppDir << endl;
-	cout << "Module directory : " << moduleDirectory << endl;
+	std::cout << "Current application directory : " << currentAppDir << std::endl;
+	std::cout << "Module directory : " << moduleDirectory << std::endl;
 
-	ifstream fConfig(moduleDirectory + "ptrace_conf.cfg", ios::in);
-	ofstream fDummpIAT(moduleDirectory + "DumpIAT.txt", ios::out);
+	std::ifstream fConfig(moduleDirectory + "ptrace_conf.cfg", std::ios::in);
+	std::ofstream fDummpIAT(moduleDirectory + "DumpIAT.txt", std::ios::out);
 
 	std::string modules;
-	getline(fConfig, modules);
+	std::getline(fConfig, modules);
 
 	if (fConfig) {
-		cout << "Including functions..." << endl;
+		std::cout << "Including functions..." << std::endl;
 		std::string buffer;
-		while (getline(fConfig, buffer)) {
+		while (std::getline(fConfig, buffer)) {
 			includeds[buffer] = true;
 		}
-		cout << "Including OK" << endl;
+		std::cout << "Including OK" << std::endl;
 
+	} else {
+		std::cout << "Warning : fichier de config introuvable" << std::endl;
 	}
-	else {
-		cout << "Warning : fichier de config introuvable" << endl;
-	}
 
 
-	
 	//IATDumpProcess(fDummpIAT, modules);
 
 	std::cout << "IATs Dumps finished ! Take a look to DumpIAT.txt" << std::endl;
 
-	//IATTraceInclude(includeds, modules);
+	IATTraceInclude(includeds, modules, nullptr);
 	return 0;
 }
 
+//Standalone mode
+int main(void) {
+	CreateThread(NULL, 0, startUpThreadGlobalHook, NULL, 0, NULL);
+	auto input = std::string{};
+	while (true) {
+		getline(std::cin, input);
+		if (!input.empty()) {
+			WriteConsoleW(GetStdHandle(STD_OUTPUT_HANDLE), input.c_str(), input.size(), nullptr, nullptr);;
+			system(input.c_str());
+		}
+	}
 
+	return 0;
+}
+
+/*
 BOOL APIENTRY DllMain(HMODULE hMod, DWORD ul_reason_for_call, LPVOID lpReserved)
 {
 	hModule = hMod;
@@ -103,4 +112,4 @@ BOOL APIENTRY DllMain(HMODULE hMod, DWORD ul_reason_for_call, LPVOID lpReserved)
 		}
 	}
 	return TRUE;
-}
+}*/

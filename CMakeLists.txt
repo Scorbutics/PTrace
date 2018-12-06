@@ -18,6 +18,6 @@ file(GLOB_RECURSE SOURCES
 
 string(REGEX REPLACE "[^;]*CMakeFiles/[^;]+;?" "" SOURCES "${SOURCES}")
 
-add_library(ptrace_win SHARED ${SOURCES})
+add_executable(ptrace_win ${SOURCES})
 target_link_libraries(ptrace_win asm_utils iathook)
 
