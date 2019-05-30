@@ -24,4 +24,5 @@
 Makefile
 /.vs/iathook/v15
 /bin
-/.vs/ptrace_win/v15
+.vs
+*/.vs
